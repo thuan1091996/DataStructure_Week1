@@ -8,11 +8,10 @@
  ============================================================================
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "data_structures/linked_list.h"
 
 int main(void) {
 	setbuf(stdout, NULL);
-
+	LLPrintList();
 	return EXIT_SUCCESS;
 }
