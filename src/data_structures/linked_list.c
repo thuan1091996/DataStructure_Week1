@@ -22,17 +22,14 @@
 * Typedefs
 *******************************************************************************/
 
-
 /******************************************************************************
 * Variables
 *******************************************************************************/
-static myLL *p_head=NULL; 	/* <-- cur Head */
-static myLL *p_tail=NULL;	/* <-- cur Tail */
-
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
+
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
@@ -40,100 +37,108 @@ static myLL *p_tail=NULL;	/* <-- cur Tail */
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-void LLPushFront(myLL *newNode)
+void* LLGetFront(LLObject_T* Obj_P)
 {
-	printf("Push in %d \n", newNode->value);
-	newNode->next = p_head;
-    p_head = newNode;
-    if(p_tail == NULL) p_tail = p_head;
+	return Obj_P->Head_P->Key_P;
 }
 
-void LLPopFront(void)
+void* LLGetBack(LLObject_T* Obj_P)
+{
+	return Obj_P->Tail_P->Key_P;
+}
+
+void LLPushFront(LLObject_T* Obj_P, void* Key_P)
+{
+	myLL* p_newNode = (myLL*) malloc( sizeof(myLL) );
+	if (p_newNode == NULL)
+	{
+		printf("Cant allocate memory \n");
+		while(1);
+	}
+	p_newNode->Key_P = Key_P;
+	p_newNode->Next_P = Obj_P->Head_P;
+	Obj_P->Head_P = p_newNode;
+    if(Obj_P->Tail_P == NULL) Obj_P->Tail_P = Obj_P->Head_P;
+}
+
+void LLPushBack(LLObject_T* Obj_P, void* Key_P)
+{
+	myLL* p_newNode = (myLL*) malloc( sizeof(myLL) );
+	if (p_newNode == NULL)
+	{
+		printf("Cant allocate memory \n");
+		while(1);
+	}
+	p_newNode->Key_P = Key_P;
+	p_newNode->Next_P = NULL;
+	if(Obj_P->Head_P == NULL)
+	{
+		Obj_P->Head_P = p_newNode;
+		Obj_P->Tail_P = Obj_P->Head_P;
+	}
+	else
+	{
+		Obj_P->Tail_P->Next_P = p_newNode;
+		Obj_P->Tail_P = p_newNode;
+	}
+}
+
+void LLPopFront(LLObject_T* Obj_P)
 {
 	printf(" ======== Remove head =========>\n");
-	if(p_head == NULL)
+	if(Obj_P->Head_P == NULL)
 	{
 		printf("Error: HeadPt Null ???\n");
+		while(1);
 	}
 	else
 	{
-		p_head = p_head->next;
-		if(p_head == NULL) p_tail = NULL;
+		myLL *p_curhead = Obj_P->Head_P;
+		Obj_P->Head_P = Obj_P->Head_P->Next_P;
+		if(Obj_P->Head_P == NULL) Obj_P->Tail_P = NULL;
+		free(p_curhead);
 	}
 }
 
-uint8_t LLGetFront()
+void LLPopBack(LLObject_T* Obj_P)
 {
-	return p_head->value;
-}
-
-uint8_t LLGetBack()
-{
-	return p_tail->value;
-}
-
-void LLPopBack(void)
-{
-
 	printf("======== Remove tail =========>\n");
-	if(p_head == NULL)
+	if(Obj_P->Head_P == NULL)
 		printf("There is nothing to pop \n");
-	else if (p_head == p_tail)
-	{
-		p_head = NULL;
-		p_tail = NULL;
-	}
 	else
 	{
-		myLL* p_temp=p_head;
-		while(p_temp->next != p_tail)
+		myLL* p_temp=Obj_P->Head_P;
+		if (Obj_P->Head_P == Obj_P->Tail_P)
 		{
-			p_temp = p_temp->next;
+			Obj_P->Head_P = NULL;
+			Obj_P->Tail_P = NULL;
 		}
-		p_temp->next = NULL;
-		p_tail = p_temp;
-	}
-}
-void LLPushBack(myLL *newNode)
-{
-	printf("Push back to tail %d \n", newNode->value);
-	if(p_head == NULL)
-	{
-		p_head = newNode;
-		p_tail = p_head;
-	}
-	else
-	{
-		p_tail->next = newNode;
-		p_tail = newNode;
-	}
-}
-
-bool LLSearchNode(uint8_t findme)
-{
-	myLL* p_cur = p_head;
-	while(p_cur != NULL)
-	{
-		if (p_cur->value != findme)
-			p_cur = p_cur->next;
 		else
-			return true;
+		{
+			while(p_temp->Next_P != Obj_P->Tail_P)
+			{
+				p_temp = p_temp->Next_P;
+			}
+			p_temp->Next_P = NULL;	/* Update node before tail */
+			Obj_P->Tail_P = p_temp;
+			p_temp = p_temp->Next_P;
+		}
+		free(p_temp);
 	}
-	return false;
 }
 
-void LLPrintList()
+void LLPrintList(LLObject_T* Obj_P)
 {
 	printf("\n");
-	printf("HeadPt: %p \n", p_head);
-	myLL* p_cur = p_head;
+	printf("HeadPt: %p \n", Obj_P->Head_P);
+	myLL* p_cur = Obj_P->Head_P;
 	printf("------------------------------------------------------- \n");
 	while(1)
 	{
 		if(p_cur != NULL)
 		{
-			printf("Address %p --- Value: %3d --- Next: %p \n", p_cur, p_cur->value, p_cur->next);
-			p_cur = p_cur->next;
+			printf("Address %p --- Value: %3d --- Next: %p \n", p_cur, *((uint8_t*)p_cur->Key_P), p_cur->Next_P);
+			p_cur = p_cur->Next_P;
 		}
 		else
 		{
@@ -141,7 +146,54 @@ void LLPrintList()
 		}
 	}
 	printf("------------------------------------------------------- \n");
-	printf("TailPt: %p \n",p_tail);
+	printf("TailPt: %p \n",Obj_P->Tail_P);
 	printf("\n");
 }
 
+void LLInit(LLObject_T* Obj_P)
+{
+	#if 0
+	LL_P->GetFront	= &LLGetFront;
+	LL_P->GetBack	= &LLGetBack;
+	LL_P->PushFront	= &LLPushFront;
+	LL_P->PushBack	= &LLPushBack;
+	LL_P->PopFront	= &LLPopFront;
+	LL_P->PopBack	= &LLPopBack;
+	LL_P->IsEmpty	= &LLIsEmpty;
+	LL_P->IsExist	= &LLIsExist;
+	LL_P->PrintList	= &LLPrintList;
+	#endif  /* End of 0 */
+}
+
+bool LLIsEmpty(LLObject_T* Obj_P)
+{
+	if(Obj_P->Head_P == NULL)
+		return true;
+	else
+		return false;
+}
+
+bool LLIsExist(LLObject_T* Obj_P, void* Key_P)
+{
+	myLL* p_cur = Obj_P->Head_P;
+	while(p_cur != NULL)
+	{
+		if (p_cur->Key_P != Key_P)
+			p_cur = p_cur->Next_P;
+		else
+			return true;
+	}
+	return false;
+}
+
+LLObject_T* LLCreate(void)
+{
+	LLObject_T *p_ll = malloc(sizeof (LLObject_T));
+	if (p_ll == NULL)
+	{
+		while(1);
+	}
+	p_ll->Head_P= NULL;
+	p_ll->Tail_P= NULL;
+	return p_ll;
+}

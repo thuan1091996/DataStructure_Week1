@@ -29,9 +29,28 @@
 *******************************************************************************/
 typedef struct Mylist
 {
-    uint8_t value;
-    struct Mylist *next; //check me if need prefix
+    void* Key_P;
+    struct Mylist *Next_P;
 }myLL;
+
+typedef struct LLObject
+{
+	#if 0
+	/* Interface */
+	void*	(*GetBack)();
+	void*	(*GetFront)();
+	void 	(*PopBack)();
+	void 	(*PopFront)();
+	void 	(*PushBack)(void* Key_P);
+	void 	(*PushFront)(void* Key_P);
+	void 	(*PrintList)();
+	bool	(*IsEmpty)();
+	bool	(*IsExist)(void* Key_P);
+	#endif  /* End of 0 */
+	/* Attribute */
+	myLL* Head_P;
+	myLL* Tail_P;
+}LLObject_T;
 
 /******************************************************************************
 * Variables
@@ -44,15 +63,17 @@ typedef struct Mylist
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-uint8_t LLGetFront();
-uint8_t LLGetBack();
-bool LLSearchNode(uint8_t findme);
-void LLPushFront(myLL *newNode);
-void LLPopFront(void);
-void LLPopBack(void);
-void LLPushBack(myLL *newNode);
-void LLPrintList();
-
+void* LLGetFront(LLObject_T* Obj_P);
+void* LLGetBack(LLObject_T* Obj_P);
+void  LLPopFront(LLObject_T* Obj_P);
+void  LLPopBack(LLObject_T* Obj_P);
+void  LLPrintList(LLObject_T* Obj_P);
+void  LLInit(LLObject_T* Obj_P);
+void  LLPushFront(LLObject_T* Obj_P, void* Key_P);
+void  LLPushBack(LLObject_T* Obj_P, void* Key_P);
+bool LLIsExist(LLObject_T* Obj_P, void* Key_P);
+bool LLIsEmpty(LLObject_T* Obj_P);
+LLObject_T* LLCreate(void);
 
 
 #endif /* LINKED_LIST_H_ */
