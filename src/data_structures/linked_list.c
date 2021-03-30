@@ -85,7 +85,6 @@ void LLPushBack(LLObject_T* Obj_P, void* Key_P)
 
 void LLPopFront(LLObject_T* Obj_P)
 {
-	printf(" ======== Remove head =========>\n");
 	if(Obj_P->Head_P == NULL)
 	{
 		printf("Error: HeadPt Null ???\n");
@@ -102,7 +101,6 @@ void LLPopFront(LLObject_T* Obj_P)
 
 void LLPopBack(LLObject_T* Obj_P)
 {
-	printf("======== Remove tail =========>\n");
 	if(Obj_P->Head_P == NULL)
 		printf("There is nothing to pop \n");
 	else

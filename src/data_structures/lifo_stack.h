@@ -54,6 +54,7 @@ typedef struct myStack
 * Function Prototypes
 *******************************************************************************/
 //StackObj_T* StackCreate(void);
+void StackInit(StackObj_T* Obj_P);
 void StackPush(StackObj_T* Obj_P, uint8_t data);
 uint8_t StackGetTop(StackObj_T* Obj_P);
 uint8_t StackPop(StackObj_T* Obj_P);
